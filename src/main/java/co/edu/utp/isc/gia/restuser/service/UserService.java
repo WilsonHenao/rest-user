@@ -5,11 +5,12 @@
  */
 package co.edu.utp.isc.gia.restuser.service;
 
+import co.edu.utp.isc.gia.restuser.data.entity.UserModel;
+import co.edu.utp.isc.gia.restuser.data.repository.UserRepository;
 import co.edu.utp.isc.gia.restuser.web.dto.UserDto;
-import java.util.ArrayList;
 import java.util.List;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -17,21 +18,24 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Service
 public class UserService {
-    private final List<UserDto> users = new ArrayList<>();
+    //private final List<UserDto> users = new ArrayList<>();
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+
+    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+    }
+    
     
     public UserDto save(UserDto user){
-        
-        user.setId(users.size() + 1L);
-        user.setUsername(user.getUsername().toLowerCase());
-        users.add(user);
-        return user;
+        UserModel myUser = modelMapper.map(user, UserModel.class);
+        myUser = userRepository.save(myUser);
+        UserDto resp = modelMapper.map(myUser, UserDto.class);
+        return resp;
     }
     
     public List<UserDto> listAll(){
-        return users;
-    }
-    
-    public UserDto findOne(@PathVariable("id") Long id){
-        return users.get(id.intValue() + 1);
+        return null;
     }
 }
